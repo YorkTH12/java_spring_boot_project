@@ -1,0 +1,40 @@
+package com.project.project.service;
+
+import org.springframework.security.core.userdetails.User.UserBuilder;
+import org.springframework.stereotype.Service;
+
+import com.project.project.model.Member;
+import com.project.project.repository.MemberRepository;
+
+import java.util.Optional;
+
+import org.hibernate.mapping.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+    private final MemberRepository repository;
+
+    public UserDetailsServiceImpl(MemberRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Member> user = repository.findById(username);
+        UserBuilder builder = null;
+        if (user.isPresent()) {
+            Member currentUser = user.get();
+            builder = org.springframework.security.core.userdetails.User.withUsername(username);
+            builder.password(currentUser.getM_pass());
+            builder.roles(currentUser.getM_role());
+        } else {
+            throw new UsernameNotFoundException("User not found.");
+        }
+        return builder.build();
+    }
+}
