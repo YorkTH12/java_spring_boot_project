@@ -26,7 +26,7 @@ public class Member {
     @Column(length = 60)
     private String m_name;
 
-    @Column(length = 50)
+    @Column(length = 255)
     private String m_pass;
 
     @Column(length = 10)
